@@ -1,7 +1,7 @@
 💻 finance-collab-frontend – React Application
 
 🧭 Overview
-This is the frontend for the Finance Collaboration Platform, built with React and styled using TailwindCSS. It integrates ActionCable for seamless real-time updates to team dashboards.
+This is the frontend for the [Finance Collab Backend](https://github.com/arunkumark1ly/finance-collab-backend), built with React and styled using TailwindCSS. It integrates ActionCable for seamless real-time updates to team dashboards.
 
 ⚛️ React
 🎨 TailwindCSS
