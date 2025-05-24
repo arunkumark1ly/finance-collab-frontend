@@ -3,14 +3,13 @@
 🧭 Overview
 This is the frontend for the Finance Collaboration Platform, built with React and styled using TailwindCSS. It integrates ActionCable for seamless real-time updates to team dashboards.
 
-🛠️ Tech Stack
 ⚛️ React
 🎨 TailwindCSS
 
 
 📦 Setup Instructions
 # Clone the repository
-git clone https://github.com/yourname/finance-collab-frontend.git
+git clone https://github.com/arunkumark1ly/finance-collab-frontend
 cd finance-collab-frontend
 
 # Install dependencies
@@ -21,7 +20,7 @@ In the project directory, you can run:
 npm start
 
 Starts the app in development mode.
-Open http://localhost:3000 to view it in your browser.
+Open http://localhost:4000 to view it in your browser.
 The page reloads automatically when changes are saved. Lint errors are shown in the console.
 
 npm test
