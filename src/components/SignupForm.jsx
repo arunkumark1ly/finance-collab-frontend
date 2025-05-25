@@ -1,35 +1,30 @@
-// src/components/SignInForm.jsx
+// src/components/SignupForm.jsx
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
 
-export default function SignInForm() {
-  const { login } = useAuth();
+export default function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSignIn = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/users/sign_in', { user: { email, password } });
+      const res = await api.post('/users/sign_up', { user: { email, password } });
       if (res.data && res.data.data) {
-        const token = res.headers['authorization'];
-        login(res.data.data, token);
-        navigate('/dashboard');
+        navigate('/signin'); // Redirect to sign-in page after successful signup
       } else {
         setError('Invalid response structure');
       }
     } catch (err) {
-      setError('Invalid credentials');
+      setError('Failed to sign up');
     }
   };
 
   return (
-    <form onSubmit={handleSignIn} className="space-y-4">
-      <h2 className="text-xl font-bold mb-4">Sign In</h2>
+    <form onSubmit={handleSignup} className="space-y-4">
       {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
       <input
         type="email"
@@ -47,9 +42,9 @@ export default function SignInForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      <button className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 transition duration-200">Login</button>
+      <button className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 transition duration-200">Sign Up</button>
       <p className="text-center mt-4">
-        Don't have an account? <Link to="/" className="text-blue-500 hover:underline">Sign Up</Link>
+        Already have an account? <a href="/signin" className="text-blue-500 hover:underline">Sign In</a>
       </p>
     </form>
   );

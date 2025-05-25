@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import SignInPage from './pages/SignInPage';
+import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import { useAuth } from './context/AuthContext';
 
 function PrivateRoute({ children }) {
@@ -11,13 +12,13 @@ function PrivateRoute({ children }) {
 function App() {
   return (
     <Routes>
-      <Route path="/signin" element={<SignInPage />} />
-      <Route path="/" element={
+      <Route path="/" element={<Home />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/dashboard" element={
         <PrivateRoute>
           <Dashboard />
         </PrivateRoute>
       } />
-      <Route path="/dashboard" element={<Navigate to="/" />} />
     </Routes>
   );
 }
