@@ -10,7 +10,7 @@ export default function TeamForm({ onTeamCreated }) {
     e.preventDefault();
     try {
       const res = await api.post('/api/v1/teams', { team: { name } });
-      onTeamCreated(res.data);
+      onTeamCreated(res.data.data);
       setName('');
     } catch (err) {
       console.error('Error creating team:', err);
