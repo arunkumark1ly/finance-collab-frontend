@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import SignInPage from './pages/SignInPage';
 import Dashboard from './pages/Dashboard';
 import { useAuth } from './context/AuthContext';
@@ -11,8 +11,13 @@ function PrivateRoute({ children }) {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<SignInPage />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/signin" element={<SignInPage />} />
+      <Route path="/" element={
+        <PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>
+      } />
+      <Route path="/dashboard" element={<Navigate to="/" />} />
     </Routes>
   );
 }

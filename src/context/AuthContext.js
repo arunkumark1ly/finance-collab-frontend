@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
 import api from '../api/axios'; // Import your Axios instance
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
   // Initialize user state from localStorage
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
@@ -24,6 +26,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
+        navigate('/'); // Redirect to the root page after logout
       } else {
         console.error('Logout failed:', response.statusText); // Handle error
       }

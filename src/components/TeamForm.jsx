@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import api from '../api/axios';
-import { useAuth } from '../context/AuthContext';
 
 export default function TeamForm({ onTeamCreated }) {
-  const { user } = useAuth();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
