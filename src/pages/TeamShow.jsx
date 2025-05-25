@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Sidebar from '../components/Sidebar';
+import InviteUserForm from '../components/InviteUserForm';
 import api from '../api/axios';
 
 export default function TeamShow() {
@@ -9,43 +10,32 @@ export default function TeamShow() {
   const navigate = useNavigate();
   const [team, setTeam] = useState(null);
   const [members, setMembers] = useState([]); // Initialize with an empty array
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [invitations, setInvitations] = useState([]); // Initialize invitations
   const [error, setError] = useState('');
 
   // Fetch team data when the component mounts
-  useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const response = await api.get(`/api/v1/teams/${id}`);
-        if (response.data.status.code === 200) {
-          setTeam(response.data.data);
-          // You can also fetch members here if needed
-        } else {
-          setError('Failed to fetch team details');
-        }
-      } catch (err) {
-        setError('Error fetching team details: ' + err.message);
+  const fetchTeam = async () => {
+    try {
+      const response = await api.get(`/api/v1/teams/${id}`);
+      if (response.data.status.code === 200) {
+        setTeam(response.data.data.team); // Set team details
+        setMembers(response.data.data.users); // Set team members
+        setInvitations(response.data.data.invitations); // Set team invitations
+      } else {
+        setError('Failed to fetch team details');
       }
-    };
+    } catch (err) {
+      setError('Error fetching team details: ' + err.message);
+    }
+  };
 
-    fetchTeam();
+  useEffect(() => {
+    fetchTeam(); // Call fetchTeam when the component mounts
   }, [id]);
 
-  const handleInviteUser = async (e) => {
-    e.preventDefault();
-    try {
-      // Mock API call to add a new member
-      const newMember = {
-        id: members.length + 1,
-        email: inviteEmail,
-        role: 'member',
-      };
-      setMembers([...members, newMember]);
-      setInviteEmail('');
-      setError('');
-    } catch (err) {
-      setError('Failed to invite user');
-    }
+  const handleUserInvited = (email) => {
+    console.log(`User invited: ${email}`);
+    fetchTeam(); // Refresh the team data to reflect the new member
   };
 
   if (!team) return null; // Show nothing until the team data is fetched
@@ -66,57 +56,54 @@ export default function TeamShow() {
               </button>
             </div>
 
-            {/* Invite User Form */}
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-lg font-semibold mb-4">Invite Team Member</h3>
-              <form onSubmit={handleInviteUser} className="space-y-4">
-                {error && <div className="text-red-500 text-sm">{error}</div>}
-                <div className="flex gap-4">
-                  <input
-                    type="email"
-                    placeholder="Enter email address"
-                    className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200"
-                  >
-                    Invite
-                  </button>
-                </div>
-              </form>
-            </div>
+            {/* Use the InviteUserForm component */}
+            <InviteUserForm teamId={team.id} onUserInvited={handleUserInvited} />
 
             {/* Team Members List */}
             <div className="bg-white rounded-lg shadow">
               <div className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Team Members</h3>
-                <div className="space-y-4">
-                  {members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex justify-between items-center border-b pb-4 last:border-b-0 last:pb-0"
-                    >
-                      <div>
-                        <p className="font-medium">{member.email}</p>
-                        <p className="text-sm text-gray-600 capitalize">{member.role}</p>
+                {members.length === 0 ? (
+                  <p className="text-gray-500">No team members yet.</p> // Placeholder message
+                ) : (
+                  <div className="space-y-4">
+                    {members.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex justify-between items-center border-b pb-4 last:border-b-0 last:pb-0"
+                      >
+                        <div>
+                          <p className="font-medium">{member.email}</p>
+                          <p className="text-sm text-gray-600 capitalize">Member</p>
+                        </div>
                       </div>
-                      {member.role !== 'admin' && (
-                        <button
-                          className="text-red-600 hover:text-red-800 text-sm"
-                          onClick={() => {
-                            setMembers(members.filter((m) => m.id !== member.id));
-                          }}
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Invitations List */}
+            <div className="bg-white rounded-lg shadow mt-6">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Pending Invitations</h3>
+                {invitations.length === 0 ? (
+                  <p className="text-gray-500">No pending invitations.</p> // Placeholder message
+                ) : (
+                  <div className="space-y-4">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="flex justify-between items-center border-b pb-4 last:border-b-0 last:pb-0"
+                      >
+                        <div>
+                          <p className="font-medium">{invitation.email}</p>
+                          <p className="text-sm text-gray-600">Invited</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
