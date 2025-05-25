@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create an Axios instance with a base URL
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api/v1', // Replace with your API base URL
+  baseURL: 'http://localhost:3000/', // Ensure this is your API base URL
   timeout: 10000, // Optional: Set a timeout for requests
   headers: {
     'Content-Type': 'application/json', // Optional: Set default headers
@@ -15,7 +15,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers['Authorization'] = `${token}`;
     }
     return config;
   },

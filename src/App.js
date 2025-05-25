@@ -11,12 +11,8 @@ function PrivateRoute({ children }) {
 function App() {
   return (
     <Routes>
-      <Route path="/signin" element={<SignInPage />} />
-      <Route path="/" element={
-        <PrivateRoute>
-          <Dashboard />
-        </PrivateRoute>
-      } />
+      <Route path="/" element={<SignInPage />} />
+      <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );
 }

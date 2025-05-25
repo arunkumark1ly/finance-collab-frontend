@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,12 +8,20 @@ export default function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/login', { email, password });
-      login(res.data.user, res.data.token);
+      const res = await api.post('/users/sign_in', { user: { email, password } });
+      if (res.data && res.data.data) {
+        const token = res.headers['authorization'];
+        console.log('TOKENnnnnnnnnn', token);
+        login(res.data.data, token);
+        navigate('/dashboard');
+      } else {
+        setError('Invalid response structure');
+      }
     } catch (err) {
       setError('Invalid credentials');
     }

@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 export default function TeamForm({ onTeamCreated }) {
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
   const handleCreateTeam = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/teams', { team: { name } });
+      const res = await api.post('/api/v1/teams', { team: { name } });
       onTeamCreated(res.data);
       setName('');
     } catch (err) {
+      console.error('Error creating team:', err);
       setError('Failed to create team');
     }
   };

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import api from '../api/axios'; // Import your Axios instance
 
 const AuthContext = createContext();
@@ -16,10 +16,20 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+  const logout = async () => {
+    try {
+      const response = await api.delete('/users/sign_out');
+
+      if (response.status === 200) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+      } else {
+        console.error('Logout failed:', response.statusText); // Handle error
+      }
+    } catch (error) {
+      console.error('Logout error:', error); // Handle any errors
+    }
   };
 
   return (
