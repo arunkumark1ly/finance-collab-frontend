@@ -1,3 +1,4 @@
+// src/components/SignInForm.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -16,7 +17,6 @@ export default function SignInForm() {
       const res = await api.post('/users/sign_in', { user: { email, password } });
       if (res.data && res.data.data) {
         const token = res.headers['authorization'];
-        console.log('TOKENnnnnnnnnn', token);
         login(res.data.data, token);
         navigate('/dashboard');
       } else {
@@ -28,13 +28,13 @@ export default function SignInForm() {
   };
 
   return (
-    <form onSubmit={handleSignIn} className="bg-white p-6 rounded shadow w-80">
+    <form onSubmit={handleSignIn} className="space-y-4">
       <h2 className="text-xl font-bold mb-4">Sign In</h2>
       {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
       <input
         type="email"
         placeholder="Email"
-        className="input w-full mb-2"
+        className="input w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -42,12 +42,12 @@ export default function SignInForm() {
       <input
         type="password"
         placeholder="Password"
-        className="input w-full mb-4"
+        className="input w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      <button className="bg-blue-600 text-white w-full py-2 rounded">Login</button>
+      <button className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700 transition duration-200">Login</button>
     </form>
   );
 }
