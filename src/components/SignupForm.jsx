@@ -12,7 +12,7 @@ export default function SignupForm() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/users/sign_up', { user: { email, password } });
+      const res = await api.post('/users', { user: { email, password } });
       if (res.data && res.data.data) {
         navigate('/signin'); // Redirect to sign-in page after successful signup
       } else {
