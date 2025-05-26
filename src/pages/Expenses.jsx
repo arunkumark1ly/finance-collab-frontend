@@ -9,11 +9,13 @@ import Breadcrumbs from '../components/Breadcrumbs';
 export default function Expenses() {
   const { teamId } = useParams();
   const [expenses, setExpenses] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [newExpense, setNewExpense] = useState({
     amount: '',
     description: '',
-    category: '',
     spent_on: '',
   });
 
@@ -22,7 +24,7 @@ export default function Expenses() {
     try {
       const response = await api.get(`/api/v1/teams/${teamId}/expenses`);
       if (response.status === 200) {
-        setExpenses(response.data); // Set expenses data
+        setExpenses(response.data);
       } else {
         setError('Failed to fetch expenses');
       }
@@ -31,19 +33,45 @@ export default function Expenses() {
     }
   };
 
+  // Fetch categories when the component mounts
   useEffect(() => {
-    fetchExpenses(); // Call fetchExpenses when the component mounts
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/api/v1/categories');
+        if (response.status === 200) {
+          setCategories(response.data);
+        } else {
+          setError('Failed to fetch categories');
+        }
+      } catch (err) {
+        setError('Error fetching categories: ' + err.message);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    fetchExpenses();
   }, [teamId]);
 
   const handleCreateExpense = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post(`/api/v1/teams/${teamId}/expenses`, {
-        expense: newExpense,
-      });
+      const payload = {
+        expense: {
+          ...newExpense,
+          category_id: selectedCategoryId !== "__new" ? selectedCategoryId : undefined,
+          category_name: selectedCategoryId === "__new" ? newCategoryName : undefined,
+        },
+      };
+
+      const response = await api.post(`/api/v1/teams/${teamId}/expenses`, payload);
       if (response.status === 201) {
-        setExpenses([...expenses, response.data]); // Add new expense to the list
-        setNewExpense({ amount: '', description: '', category: '', spent_on: '' }); // Reset form
+        setExpenses([...expenses, response.data]);
+        // Reset form
+        setNewExpense({ amount: '', description: '', spent_on: '' });
+        setSelectedCategoryId('');
+        setNewCategoryName('');
       } else {
         setError('Failed to create expense');
       }
@@ -55,7 +83,7 @@ export default function Expenses() {
   const handleDeleteExpense = async (id) => {
     try {
       await api.delete(`/api/v1/teams/${teamId}/expenses/${id}`);
-      setExpenses(expenses.filter((expense) => expense.id !== id)); // Remove deleted expense from the list
+      setExpenses(expenses.filter((expense) => expense.id !== id));
     } catch (err) {
       setError('Error deleting expense: ' + err.message);
     }
@@ -97,17 +125,35 @@ export default function Expenses() {
                   onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
                   required
                 />
-                <input
-                  type="text"
-                  placeholder="Category"
-                  className="p-2 border border-gray-300 rounded"
-                  value={newExpense.category}
-                  onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-                  required
-                />
+                <div className="space-y-2 flex flex-col">
+                  <select
+                    value={selectedCategoryId}
+                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                    className="p-2 border border-gray-300 rounded w-full"
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                    <option value="__new">+ Add new category</option>
+                  </select>
+                  {selectedCategoryId === "__new" && (
+                    <input
+                      type="text"
+                      placeholder="Enter new category name"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      className="p-2 border border-gray-300 rounded w-full"
+                      required
+                    />
+                  )}
+                </div>
                 <input
                   type="date"
-                  className="p-2 border border-gray-300 rounded"
+                  className="p-2 border border-gray-300 rounded w-full"
                   value={newExpense.spent_on}
                   onChange={(e) => setNewExpense({ ...newExpense, spent_on: e.target.value })}
                   required
@@ -136,7 +182,7 @@ export default function Expenses() {
                             {expense.description}
                           </Link>
                           <p className="text-sm text-gray-600">Amount: ${expense.amount}</p>
-                          <p className="text-sm text-gray-600">Category: {expense.category}</p>
+                          <p className="text-sm text-gray-600">Category: {expense.category ? expense.category.name : 'N/A'}</p>
                           <p className="text-sm text-gray-600">Spent On: {new Date(expense.spent_on).toLocaleDateString()}</p>
                           {expense.deleted_at && (
                             <p className="text-sm text-gray-600">Deleted: Yes</p>

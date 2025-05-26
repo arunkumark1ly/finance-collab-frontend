@@ -59,10 +59,11 @@ export default function AuditLog() {
                         <p className="text-sm text-gray-600">Changed By: {log.changed_by.email}</p>
                         <p className="text-sm text-gray-600">Created At: {new Date(log.created_at).toLocaleString()}</p>
                         <div>
-                          <h4 className="font-semibold">Previous Data:</h4>
-                          <pre className="bg-gray-100 p-2 rounded">{JSON.stringify(log.previous_data, null, 2)}</pre>
                           <h4 className="font-semibold">New Data:</h4>
-                          <pre className="bg-gray-100 p-2 rounded">{JSON.stringify(log.new_data, null, 2)}</pre>
+                          <pre className="bg-gray-100 p-2 rounded">
+                            {JSON.stringify(log.new_data, null, 2)}
+                          </pre>
+                          <p className="text-sm text-gray-600">Category: {log.category_name}</p>
                         </div>
                       </div>
                     ))}
