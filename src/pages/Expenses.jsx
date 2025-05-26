@@ -129,14 +129,18 @@ export default function Expenses() {
                           <p className="text-sm text-gray-600">Amount: ${expense.amount}</p>
                           <p className="text-sm text-gray-600">Category: {expense.category}</p>
                           <p className="text-sm text-gray-600">Spent On: {new Date(expense.spent_on).toLocaleDateString()}</p>
-                          <p className="text-sm text-gray-600">Created by: {expense.user.email}</p>
+                          {expense.deleted_at && (
+                            <p className="text-sm text-gray-600">Deleted: Yes</p>
+                          )}
                         </div>
-                        <button
-                          className="text-red-600 hover:text-red-800 text-sm"
-                          onClick={() => handleDeleteExpense(expense.id)}
-                        >
-                          Delete
-                        </button>
+                        {!expense.deleted_at && (
+                          <button
+                            className="text-red-600 hover:text-red-800 text-sm"
+                            onClick={() => handleDeleteExpense(expense.id)}
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
