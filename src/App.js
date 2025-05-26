@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Teams from './pages/Teams';
 import TeamShow from './pages/TeamShow';
 import Expenses from './pages/Expenses';
+import AuditLog from './pages/AuditLog';
 import { useAuth } from './context/AuthContext';
 
 function PrivateRoute({ children }) {
@@ -35,6 +36,11 @@ function App() {
       <Route path="/teams/:teamId/expenses" element={
         <PrivateRoute>
           <Expenses />
+        </PrivateRoute>
+      } />
+      <Route path="/teams/:teamId/expenses/:expenseId/audit_log" element={
+        <PrivateRoute>
+          <AuditLog />
         </PrivateRoute>
       } />
     </Routes>

@@ -1,13 +1,13 @@
 // src/pages/Expenses.jsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Sidebar from '../components/Sidebar';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 export default function Expenses() {
   const { teamId } = useParams();
-  const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState('');
   const [newExpense, setNewExpense] = useState({
@@ -67,6 +67,13 @@ export default function Expenses() {
         <Sidebar />
         <main className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
+            <Breadcrumbs 
+              items={[
+                { label: 'Team', path: `/teams/${teamId}` },
+                { label: 'Expenses', path: `/teams/${teamId}/expenses` }
+              ]}
+            />
+
             <h2 className="text-2xl font-bold mb-6">Expenses for Team</h2>
             {error && <div className="text-red-500 mb-4">{error}</div>}
 
@@ -125,7 +132,9 @@ export default function Expenses() {
                     {expenses?.map((expense) => (
                       <div key={expense.id} className="flex justify-between items-center border-b pb-4 last:border-b-0 last:pb-0">
                         <div>
-                          <p className="font-medium">{expense.description}</p>
+                          <Link to={`/teams/${teamId}/expenses/${expense.id}/audit_log`} className="font-medium text-blue-600 hover:underline">
+                            {expense.description}
+                          </Link>
                           <p className="text-sm text-gray-600">Amount: ${expense.amount}</p>
                           <p className="text-sm text-gray-600">Category: {expense.category}</p>
                           <p className="text-sm text-gray-600">Spent On: {new Date(expense.spent_on).toLocaleDateString()}</p>
