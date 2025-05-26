@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Teams from './pages/Teams';
 import TeamShow from './pages/TeamShow';
+import Expenses from './pages/Expenses';
 import { useAuth } from './context/AuthContext';
 
 function PrivateRoute({ children }) {
@@ -29,6 +30,11 @@ function App() {
       <Route path="/teams/:id" element={
         <PrivateRoute>
           <TeamShow />
+        </PrivateRoute>
+      } />
+      <Route path="/teams/:teamId/expenses" element={
+        <PrivateRoute>
+          <Expenses />
         </PrivateRoute>
       } />
     </Routes>

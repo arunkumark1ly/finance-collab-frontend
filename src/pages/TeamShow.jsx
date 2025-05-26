@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Sidebar from '../components/Sidebar';
 import InviteUserForm from '../components/InviteUserForm';
@@ -55,6 +55,11 @@ export default function TeamShow() {
                 Back to Teams
               </button>
             </div>
+
+            {/* Link to Expenses Page */}
+            <Link to={`/teams/${team.id}/expenses`} className="text-blue-600 hover:underline mb-4">
+              Manage Expenses
+            </Link>
 
             {/* Use the InviteUserForm component */}
             <InviteUserForm teamId={team.id} onUserInvited={handleUserInvited} />
